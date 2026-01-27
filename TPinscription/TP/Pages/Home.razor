@@ -1,0 +1,92 @@
+﻿@page "/"
+
+<PageTitle>Home</PageTitle>
+
+<div class="card mb-3">
+    <div class="card-header">Nom</div>
+    <div class="card-body">
+        <input type="text" class="form-control" @bind="nom" @bind:event="oninput" />
+    </div>
+
+    <div class="card-header">Email</div>
+    <div class="card-body">
+        <input type="text" class="form-control" @bind="email" @bind:event="oninput" />
+    </div>
+
+    <div class="card-header">Nombre de participants</div>
+    <div class="card-body">
+        <input type="range" class="form-range" min="1" max="5" step="1" @bind="nombreParticipants" />
+    </div>
+    
+    <div class="card mb-3">
+        <div class="card-header">J'accepte les conditions</div>
+        <div class="card-body">
+            <div class="form-check">
+                <input type="checkbox" class="form-check-input" @bind="accepteConditions" />
+                <label class="form-check-label">J'accepte</label>
+            </div>
+        </div>
+    </div>
+
+    <div class="card mb-3">
+        <div class="card-header">Option VIP (+50€)</div>
+        <div class="card-body">
+            <div class="form-check">
+                <input type="checkbox" class="form-check-input" @bind="estVIP" />
+                <label class="form-check-label">VIP</label>
+            </div>
+        </div>
+    </div>
+
+    @if (!string.IsNullOrWhiteSpace(nom))
+    {
+        <div class="card-body">
+            <p class="mt-2">Votre nom : <strong>@nom</strong></p>
+            <p class="mt-2">Votre email: <strong>@email</strong></p>
+            <p class="mt-2">Nombre de participants : <strong>@nombreParticipants</strong></p>
+            <p class="mt-2">Option VIP : <span class="badge @(estVIP ? "bg-success" : "bg-danger")">@(estVIP ? "VIP" : "NON VIP") </span></p>
+            <p class="mt-2">Condition : <span class="badge @(accepteConditions ? "bg-success" : "bg-danger")">@(accepteConditions ? "Conditions acceptées" : "Conditions non acceptées") </span></p
+            <p>Total : <strong>@CalculerTotal() €</strong></p>
+        </div> 
+    }
+    
+    <button class="btn btn-primary" disabled="@(!EstFormulaireValide)" @onclick="Inscrire">
+        S'inscrire
+    </button>
+
+    @if (inscriptionConfirmee)
+    {
+        <div class="alert alert-success mt-3">
+            <h4>Inscription confirmée !</h4>
+            <p>@nom (@email)</p>
+        </div>
+    }
+</div>
+
+@code {
+
+    private string nom = "";
+    private string email = "";
+    private int nombreParticipants = 1;
+    private bool accepteConditions = false;
+    private bool estVIP = false;
+    private bool inscriptionConfirmee = false;
+
+    private bool EstFormulaireValide => !string.IsNullOrWhiteSpace(nom) && !string.IsNullOrWhiteSpace(email) && accepteConditions;
+
+    private int CalculerTotal()
+    {
+        int total = nombreParticipants * 20;
+
+        if (estVIP)
+            total += 50;
+
+        return total;
+    }
+
+    private void Inscrire()
+    {
+        inscriptionConfirmee = true;
+    }
+}
+
