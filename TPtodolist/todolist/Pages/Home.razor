@@ -1,0 +1,81 @@
+﻿@page "/"
+@using todolist.Components
+@using todolist.Model
+
+<PageTitle>Home</PageTitle>
+
+<div class="container mt-4">
+    <div class="input-group mb-3">
+        <input type="text" class="form-control" @bind="title" placeholder="Nouvelle tâche" />
+        <button class="btn btn-primary" @onclick="addItem">Ajouter</button>
+    </div>
+
+    <div class="mb-3">
+        <span class="badge bg-secondary me-2">Total : @listTask.Count</span>
+        <span class="badge bg-success me-2">✅ Validées : @listTask.Count(t => t.IsCompleted)</span>
+        <span class="badge bg-warning text-dark">⏳ En attente : @listTask.Count(t => !t.IsCompleted)</span>
+    </div>
+
+    @if (listTask.Count > 0 && AreAllTasksCompleted())
+    {
+        <div class="alert alert-success">
+            🎉 Toutes les tâches sont complétées ! Félicitations !
+        </div>
+    }
+
+    @if (listTask.Count > 0)
+    {
+        <ul class="list-group mb-3">
+            @foreach (var task in listTask)
+            {
+                <TodoItem Task="@task" OnDeleteSelection="deleteSelection" OnStatusChanged="refresh" />
+            }
+        </ul>
+    }else
+    {
+        <div class="alert alert-info">Aucune tâche ajoutée pour le moment.</div>
+    }
+
+    <button class="btn btn-danger" @onclick="deleteAllComplete">Supprimer toutes les tâches complétées</button>
+</div>
+
+@code {
+    private List<TodoTask> listTask = new()
+    {
+        new TodoTask(1, "Faire les courses", false),
+        new TodoTask(2, "Réviser Blazor", true),
+        new TodoTask(3, "Aller à la salle", false)
+    };
+
+    private string title = "";
+
+    private void addItem()
+    {
+        if (!string.IsNullOrWhiteSpace(title))
+        {
+            int newId = listTask.Any() ? listTask.Max(t => t.Id) + 1 : 1;
+            listTask.Add(new TodoTask(newId, title, false));
+            title = string.Empty;
+        }
+    }
+
+    private void deleteSelection(int id)
+    {
+        listTask.RemoveAll(t => t.Id == id);
+    }
+
+    private void refresh()
+    {
+        StateHasChanged();
+    }
+
+    private void deleteAllComplete()
+    {
+        listTask.RemoveAll(t => t.IsCompleted);
+    }
+
+    private bool AreAllTasksCompleted()
+    {
+        return listTask.All(t => t.IsCompleted);
+    }
+}
