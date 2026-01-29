@@ -1,0 +1,35 @@
+﻿<div class="d-flex gap-3">
+    <div class="card text-white bg-primary flex-fill text-center p-2">
+        <p class="mb-0 fw-bold fs-3">@Total</p>
+        <h5 class="mb-1">Total</h5>
+    </div>
+
+    <div class="card text-white bg-success flex-fill text-center p-2">
+        <p class="mb-0 fw-bold fs-3">@Actifs</p>
+        <h5 class="mb-1">Actifs</h5>
+    </div>
+
+    <div class="card text-dark bg-warning flex-fill text-center p-2">
+        <p class="mb-0 fw-bold fs-3">@Rupture</p>
+        <h5 class="mb-1">Rupture</h5>
+    </div>
+
+    <div class="card text-white bg-info flex-fill text-center p-2">
+        <p class="mb-0 fw-bold fs-3">@Math.Truncate(Valeur) €</p>
+        <h5 class="mb-1">Valeur</h5>
+    </div>
+</div>
+
+@code {
+    [Parameter]
+    public int Total { get; set; } = 0;
+
+    [Parameter]
+    public int Actifs { get; set; } = 0;
+
+    [Parameter]
+    public int Rupture { get; set; } = 0;
+
+    [Parameter]
+    public decimal Valeur { get; set; } = 0;
+}

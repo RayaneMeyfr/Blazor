@@ -1,0 +1,83 @@
+﻿@page "/produits"
+@using BlazorDemo.Client.Components
+
+@inject IProduitServiceClient ProduitService
+
+<GestionProduct Charger="Charger" OnCategorieChanged="selectCategorie" OnSearchChanged="searchByName" />
+
+@if (chargement)
+{
+    <div class="text-center py-4">
+        <div class="spinner-border text-primary"></div>
+        <p class="mt-2">Chargement...</p>
+    </div>
+}
+else
+{
+    <TableProduct produits="produits" OnDeleteSelection="deleteSelection" />
+}
+
+<StateGlobale Total="@produitsTous.Count" Actifs="@produitsTous.Count(p => p.EstActif)" Rupture="@produitsTous.Count(p => p.Stock == 0)" Valeur="@produitsTous.Sum(p => p.Prix)" />
+
+@code {
+    private List<Produit> produits = new();
+    private List<Produit> produitsTous = new(); 
+    private bool chargement = true;
+
+    private string recherche = "";
+    private string categorieSelectionnee = "Tout";
+
+    protected override async Task OnInitializedAsync() => await Charger();
+
+    private async Task Charger()
+    {
+        chargement = true;
+        produitsTous = await ProduitService.ObtenirTousAsync();
+        produits = new List<Produit>(produitsTous); 
+        chargement = false;
+    }
+
+    private async Task deleteSelection(int id)
+    {
+        bool ok = await ProduitService.SupprimerAsync(id);
+
+        if (ok)
+        {
+            produits.RemoveAll(p => p.Id == id);
+            produitsTous.RemoveAll(p => p.Id == id);
+        }
+    }
+
+
+    private async Task selectCategorie(ChangeEventArgs e)
+    {
+        categorieSelectionnee = e.Value?.ToString() ?? "Tout";
+        await ApplyFilters();
+    }
+
+    private async Task searchByName(ChangeEventArgs e)
+    {
+        recherche = e.Value?.ToString() ?? "";
+        await ApplyFilters();
+    }
+
+    private async Task ApplyFilters()
+    {
+        await Charger(); 
+
+        IEnumerable<Produit> query = produits;
+
+   
+        if (categorieSelectionnee.ToLower() != "tout")
+        {
+            query = query.Where(p => p.Categorie.Equals(categorieSelectionnee, StringComparison.OrdinalIgnoreCase));
+        }
+
+        if (!string.IsNullOrWhiteSpace(recherche))
+        {
+            query = query.Where(p => p.Nom.Contains(recherche, StringComparison.OrdinalIgnoreCase));
+        }
+
+        produits = query.ToList();
+    }
+}

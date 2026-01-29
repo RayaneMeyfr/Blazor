@@ -1,0 +1,56 @@
+﻿<div class="card-body">
+    <div class="card-header d-flex justify-content-between align-items-center bg-dark text-white">
+        <p class="mb-0">📦 Produits</p>
+        <span class="badge bg-light text-dark">@produits.Count produit(s)</span>
+    </div>
+
+
+    <table class="table table-striped table-hover">
+        <thead class="bg-white text-dark">
+            <tr><th>ID</th><th>Nom</th><th>Categorie</th><th>Prix</th><th>Stock</th><th>Statut</th><th>Action</th></tr>
+        </thead>
+
+        <tbody>
+            @foreach (var p in produits)
+            {
+                <tr style="background-color: @(p.EstActif ? "white" : "#D4D4D4")">
+                    <td>@p.Id</td>
+
+                    <td>
+                        @p.Nom <br />
+                        <span class="font-weight-light">@p.Description</span>
+                    </td>
+
+                    <td> <span class="badge bg-primary text-withe"> @p.Categorie</span</td>
+
+                    <td class="text-success fw-bold">@p.Prix.ToString("C")</td>
+
+                    <td>
+                        <span class="badge @(p.Stock > 0 ? "bg-success" : "bg-danger")">
+                            @p.Stock
+                        </span>
+                    </td>
+
+                    <td>
+                        <span class="badge @(p.EstActif ? "bg-success" : "bg-secondary text-white")">
+                            @(p.EstActif ? "Actif" : "Inactif")
+                        </span>
+                    </td>
+
+                    <td class="d-flex gap-1">
+                        <button class="btn btn-sm btn-outline-primary">✏️</button>
+                        <button class="btn btn-sm btn-outline-danger" @onclick="() => OnDeleteSelection.InvokeAsync(p.Id)">🗑️</button>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
+
+@code {
+    [Parameter]
+    public List<Produit> produits { get; set; } = new();
+
+    [Parameter]
+    public EventCallback<int> OnDeleteSelection { get; set; }
+}

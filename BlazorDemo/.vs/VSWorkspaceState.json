@@ -1,0 +1,11 @@
+{
+  "ExpandedNodes": [
+    "",
+    "\\BlazorDemo.Client",
+    "\\BlazorDemo.Client\\Components",
+    "\\BlazorDemo.Client\\Pages",
+    "\\BlazorDemo.Client\\Pages\\Demos"
+  ],
+  "SelectedNode": "\\BlazorDemo.Client\\Pages\\Demos\\Demo4_component.razor",
+  "PreviewInSolutionExplorer": false
+}
